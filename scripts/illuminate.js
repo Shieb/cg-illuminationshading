@@ -115,11 +115,7 @@ class GlApp {
     UpdateTexture(texture, image_element) 
     {
         this.gl.bindTexture(this.gl.TEXTURE_2D, texture);
-        this.gl.texImage2D(this.gl.TEXTURE_2D, 0, this.gl.RGBA, this.gl.RGBA, this.gl.UNSIGNED_BYTE, image_element);
-        this.gl.generateMipmap(this.gl.TEXTURE_2D);
-        this.gl.bindTexture(this.gl.TEXTURE_2D, null);
-        
-        this.Render();
+        this.gl.texImage2D(this.gl.TEXTURE_2D, 0, this.gl.RGBA, this.gl.RGBA, this.gl.UNSIGNED_BYTE, image_element);
     }
 
     Render() {
@@ -129,29 +125,8 @@ class GlApp {
         // draw all models
         for (let i = 0; i < this.scene.models.length; i ++) {
             // NOTE: you need to properly select shader here
-            let selected_shader;
-            if(scene.models[i].shader.equals("color")
-            {
-                if(this.algorithm.equals("gouraud"))
-                {
-                     this.algorithm = "gouraud_color";   
-                }
-                else
-                {
-                    selected_shader = "phong_color";  
-                }
-            }
-            else
-            {
-                if(this.algorithm.equals("gouraud"))
-                {
-                     this.algorithm = "gouraud_texture";   
-                }
-                else
-                {
-                    selected_shader = "phong_texture";  
-                }
-            }
+            let selected_shader = this.algorithm + "_" + this.scene.models[i].shader;
+            
             console.log(selected_shader);
             this.gl.useProgram(this.shader[selected_shader].program);
 
