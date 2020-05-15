@@ -119,16 +119,32 @@ class GlApp {
     Render() {
         // delete previous frame (reset both framebuffer and z-buffer)
         this.gl.clear(this.gl.COLOR_BUFFER_BIT | this.gl.DEPTH_BUFFER_BIT);
-        
+
         // draw all models
         for (let i = 0; i < this.scene.models.length; i ++) {
             // NOTE: you need to properly select shader here
-            let selected_shader = this.algorithm + "_" + this.scene.models[i].shader;
-            
-            console.log(selected_shader);
+            let selected_shader;
+            if(scene.models[i].shader === 'color') {
+              if(this.algorithm === 'gouraud') {
+                selected_shader = 'gouraud_color';
+              }
+              else {
+                selected_shader = 'phong_color';
+              }
+            }
+            else {
+              if(this.algorithm === 'gouraud') {
+                selected_shader = 'gouraud_texture';
+              }
+              else {
+                selected_shader = 'phong_texture';
+              }
+            }
+
             this.gl.useProgram(this.shader[selected_shader].program);
 
             // transform model to proper position, size, and orientation
+
             glMatrix.mat4.identity(this.model_matrix);
             glMatrix.mat4.translate(this.model_matrix, this.model_matrix, this.scene.models[i].center);
             glMatrix.mat4.rotateZ(this.model_matrix, this.model_matrix, this.scene.models[i].rotate_z);
@@ -136,35 +152,46 @@ class GlApp {
             glMatrix.mat4.rotateX(this.model_matrix, this.model_matrix, this.scene.models[i].rotate_x);
             glMatrix.mat4.scale(this.model_matrix, this.model_matrix, this.scene.models[i].size);
 
+
             this.gl.uniform3fv(this.shader[selected_shader].uniform.material_color, this.scene.models[i].material.color);
             this.gl.uniformMatrix4fv(this.shader[selected_shader].uniform.projection_matrix, false, this.projection_matrix);
             this.gl.uniformMatrix4fv(this.shader[selected_shader].uniform.view_matrix, false, this.view_matrix);
             this.gl.uniformMatrix4fv(this.shader[selected_shader].uniform.model_matrix, false, this.model_matrix);
 
+            //upload more data
+
+            this.gl.uniform3fv(this.shader[selected_shader].uniform.camera_position, this.scene.camera.position);
+            this.gl.uniform1f(this.shader[selected_shader].uniform.material_shininess, this.scene.models[i].material.shininess);
+
+            this.gl.uniform3fv(this.shader[selected_shader].uniform.light_ambient, this.scene.light.ambient);
+            this.gl.uniform3fv(this.shader[selected_shader].uniform.material_specular, this.scene.models[i].material.specular);
+            this.gl.uniform1i(this.shader[selected_shader].uniform.num_of_lights, this.scene.light.point_lights.length);
+
+            let light_positions = [];
+            let light_colors = [];
+            for(let j = 0; j < this.scene.light.point_lights.length; j++) {
+              for(let k = 0; k < 3; k++) {
+                light_positions.push(this.scene.light.point_lights[j].position[k]);
+                light_colors.push(this.scene.light.point_lights[j].color[k]);
+              }
+            }
+
+            this.gl.uniform3fv(this.shader[selected_shader].uniform["light_position[0]"], new Float32Array(light_positions));
+            this.gl.uniform3fv(this.shader[selected_shader].uniform["light_color[0]"], new Float32Array(light_colors));
+
+            //Upload texture uniforms????
+            if(scene.models[i].shader === 'texture') {
+              var sampler_uniform = this.gl.getUniformLocation(this.shader[selected_shader].program, "image");
+              this.gl.activeTexture(this.gl.TEXTURE0);
+              this.gl.bindTexture(this.gl.TEXTURE_2D, scene.models[i].texture.id);
+              this.gl.uniform2fv(this.shader[selected_shader].uniform.texture_scale, this.scene.models[i].texture.scale);
+              this.gl.uniform1i(sampler_uniform, 0);
+            }
+
             this.gl.bindVertexArray(this.vertex_array[this.scene.models[i].type]);
             this.gl.drawElements(this.gl.TRIANGLES, this.vertex_array[this.scene.models[i].type].face_index_count, this.gl.UNSIGNED_SHORT, 0);
             this.gl.bindVertexArray(null);
-        }
-
-        // draw all light sources
-        for (let i = 0; i < this.scene.light.point_lights.length; i ++) {
-            this.gl.useProgram(this.shader['emissive'].program);
-
-            glMatrix.mat4.identity(this.model_matrix);
-            glMatrix.mat4.translate(this.model_matrix, this.model_matrix, this.scene.light.point_lights[i].position);
-            glMatrix.mat4.scale(this.model_matrix, this.model_matrix, glMatrix.vec3.fromValues(0.1, 0.1, 0.1));
-
-
-            this.gl.uniform3fv(this.shader['emissive'].uniform.material_color, this.scene.light.point_lights[i].color);
-            this.gl.uniformMatrix4fv(this.shader['emissive'].uniform.projection_matrix, false, this.projection_matrix);
-            this.gl.uniformMatrix4fv(this.shader['emissive'].uniform.view_matrix, false, this.view_matrix);
-            this.gl.uniformMatrix4fv(this.shader['emissive'].uniform.model_matrix, false, this.model_matrix);
-
-            this.gl.bindVertexArray(this.vertex_array['sphere']);
-            this.gl.drawElements(this.gl.TRIANGLES, this.vertex_array['sphere'].face_index_count, this.gl.UNSIGNED_SHORT, 0);
-            this.gl.bindVertexArray(null);
-        }
-    }
+     }
 
     UpdateScene(scene) {
         // update scene
