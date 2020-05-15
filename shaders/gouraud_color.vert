@@ -26,13 +26,14 @@ void main()
     
     vec3 vert_pos = vec3(model_matrix * vec4(vertex_position, 1.0)); 
     vec3 vert_norm = normalize(inverse(transpose(mat3(model_matrix))) * vertex_normal); 
-    vec3 light_direction = normalize(light_position - ver_pos); 
+    vec3 light_direction = normalize(light_position - vert_pos); 
     
-    diffuse = light_color * max(dot(ver_norm, light_direction), 0.0); 
+    diffuse = light_color * max(dot(vert_norm, light_direction), 0.0); 
 
 
     vec3 reflection_direction = reflect(-light_direction, vert_norm);
     vec3 view_direction = normalize(camera_position - vert_pos);
     float dot_prod = max(dot(reflection_direction, view_direction), 0.0);
+    
     specular = light_color * pow(dot_prod, material_shininess);
 }
