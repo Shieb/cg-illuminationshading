@@ -195,7 +195,27 @@ class GlApp {
             this.gl.bindVertexArray(this.vertex_array[this.scene.models[i].type]);
             this.gl.drawElements(this.gl.TRIANGLES, this.vertex_array[this.scene.models[i].type].face_index_count, this.gl.UNSIGNED_SHORT, 0);
             this.gl.bindVertexArray(null);
-     }
+        }
+
+
+        // draw all light sources
+        for (let i = 0; i < this.scene.light.point_lights.length; i ++) {
+            this.gl.useProgram(this.shader['emissive'].program);
+
+            glMatrix.mat4.identity(this.model_matrix);
+            glMatrix.mat4.translate(this.model_matrix, this.model_matrix, this.scene.light.point_lights[i].position);
+            glMatrix.mat4.scale(this.model_matrix, this.model_matrix, glMatrix.vec3.fromValues(0.1, 0.1, 0.1));
+
+            this.gl.uniform3fv(this.shader['emissive'].uniform.material_color, this.scene.light.point_lights[i].color);
+            this.gl.uniformMatrix4fv(this.shader['emissive'].uniform.projection_matrix, false, this.projection_matrix);
+            this.gl.uniformMatrix4fv(this.shader['emissive'].uniform.view_matrix, false, this.view_matrix);
+            this.gl.uniformMatrix4fv(this.shader['emissive'].uniform.model_matrix, false, this.model_matrix);
+
+            this.gl.bindVertexArray(this.vertex_array['sphere']);
+            this.gl.drawElements(this.gl.TRIANGLES, this.vertex_array['sphere'].face_index_count, this.gl.UNSIGNED_SHORT, 0);
+            this.gl.bindVertexArray(null);
+        }
+    }
 
     UpdateScene(scene) {
         // update scene
