@@ -90,14 +90,15 @@ class GlApp {
         // create a texture, and upload a temporary 1px white RGBA array [255,255,255,255]
         let texture = this.gl.createTexture();
 
-        gl.bindTexture(gl.TEXTURE_2D, texture);
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_NEAREST);
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
-        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, image_url);
-        gl.generateMipmap(gl.TEXTURE_2D);
-        gl.bindTexture(gl.TEXTURE_2D, null);
+        this.gl.bindTexture(this.gl.TEXTURE_2D, texture);
+        this.gl.texParameteri(this.gl.TEXTURE_2D, this.gl.TEXTURE_MAG_FILTER, this.gl.LINEAR);
+        this.gl.texParameteri(this.gl.TEXTURE_2D, this.gl.TEXTURE_MIN_FILTER, this.gl.LINEAR_MIPMAP_NEAREST);
+        this.gl.texParameteri(this.gl.TEXTURE_2D, this.gl.TEXTURE_WRAP_S, this.gl.REPEAT);
+        this.gl.texParameteri(this.gl.TEXTURE_2D, this.gl.TEXTURE_WRAP_T, this.gl.REPEAT);
+
+        this.gl.texImage2D(this.gl.TEXTURE_2D, 0, this.gl.RGBA, 1, 1, 0, this.gl.RGBA, this.gl.UNSIGNED_BYTE, new Uint8Array([255,255,255,255]));
+
+        this.gl.bindTexture(this.gl.TEXTURE_2D, null);
         
         // download the actual image
         let image = new Image();
@@ -111,15 +112,14 @@ class GlApp {
         return texture;
     }
 
-    UpdateTexture(texture, image_element) {
-        if(this.algorithm.equals("gouraud_color"))
-        {
-            this.algorithm = "gouraud_texture";   
-        }
-        else if (this.algorith.equals("phong_color"))
-        {
-            this.algorithm = "phong_texture";   
-        }
+    UpdateTexture(texture, image_element) 
+    {
+        this.gl.bindTexture(this.gl.TEXTURE_2D, texture);
+        this.gl.texImage2D(this.gl.TEXTURE_2D, 0, this.gl.RGBA, this.gl.RGBA, this.gl.UNSIGNED_BYTE, image_element);
+        this.gl.generateMipmap(this.gl.TEXTURE_2D);
+        this.gl.bindTexture(this.gl.TEXTURE_2D, null);
+        
+        this.Render();
     }
 
     Render() {
@@ -129,7 +129,29 @@ class GlApp {
         // draw all models
         for (let i = 0; i < this.scene.models.length; i ++) {
             // NOTE: you need to properly select shader here
-            let selected_shader = this.algorithm + "_" + this.scene.models[i].shader;
+            let selected_shader;
+            if(scene.models[i].shader.equals("color")
+            {
+                if(this.algorithm.equals("gouraud"))
+                {
+                     this.algorithm = "gouraud_color";   
+                }
+                else
+                {
+                    selected_shader = "phong_color";  
+                }
+            }
+            else
+            {
+                if(this.algorithm.equals("gouraud"))
+                {
+                     this.algorithm = "gouraud_texture";   
+                }
+                else
+                {
+                    selected_shader = "phong_texture";  
+                }
+            }
             console.log(selected_shader);
             this.gl.useProgram(this.shader[selected_shader].program);
 
