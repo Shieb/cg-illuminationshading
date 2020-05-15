@@ -63,18 +63,18 @@ class GlApp {
         this.gl.enable(this.gl.DEPTH_TEST);
 
         // create models - plane, cube, and sphere
-        this.vertex_array.plane = CreatePlaneVao(this.gl, this.vertex_position_attrib, 
+        this.vertex_array.plane = CreatePlaneVao(this.gl, this.vertex_position_attrib,
                                       this.vertex_normal_attrib, this.vertex_texcoord_attrib);
-        this.vertex_array.cube = CreateCubeVao(this.gl, this.vertex_position_attrib, 
+        this.vertex_array.cube = CreateCubeVao(this.gl, this.vertex_position_attrib,
                                      this.vertex_normal_attrib, this.vertex_texcoord_attrib);
-        this.vertex_array.sphere = CreateSphereVao(this.gl, this.vertex_position_attrib, 
+        this.vertex_array.sphere = CreateSphereVao(this.gl, this.vertex_position_attrib,
                                        this.vertex_normal_attrib, this.vertex_texcoord_attrib);
 
         // initialize projection matrix with a 45deg field of view
         let fov = 45.0 * (Math.PI / 180.0);
         let aspect = this.canvas.width / this.canvas.height;
         glMatrix.mat4.perspective(this.projection_matrix, fov, aspect, 0.1, 100.0);
-        
+
         // initialize view matrix based on scene's camera location / direction
         let cam_pos = this.scene.camera.position;
         let cam_target = glMatrix.vec3.create();
@@ -90,6 +90,7 @@ class GlApp {
         // create a texture, and upload a temporary 1px white RGBA array [255,255,255,255]
         let texture = this.gl.createTexture();
 
+        // TODO: set texture parameters and upload a temporary 1px white RGBA array [255,255,255,255]
         this.gl.bindTexture(this.gl.TEXTURE_2D, texture);
         this.gl.texParameteri(this.gl.TEXTURE_2D, this.gl.TEXTURE_MAG_FILTER, this.gl.LINEAR);
         this.gl.texParameteri(this.gl.TEXTURE_2D, this.gl.TEXTURE_MIN_FILTER, this.gl.LINEAR_MIPMAP_NEAREST);
@@ -99,7 +100,7 @@ class GlApp {
         this.gl.texImage2D(this.gl.TEXTURE_2D, 0, this.gl.RGBA, 1, 1, 0, this.gl.RGBA, this.gl.UNSIGNED_BYTE, new Uint8Array([255,255,255,255]));
 
         this.gl.bindTexture(this.gl.TEXTURE_2D, null);
-        
+
         // download the actual image
         let image = new Image();
         image.crossOrigin = 'anonymous';
@@ -109,15 +110,17 @@ class GlApp {
         }, false);
         image.src = image_url;
 
-        return texture;
+       return texture;
     }
 
-    UpdateTexture(texture, image_element) 
-    {
+    UpdateTexture(texture, image_element) {
+        // TODO: update image for specified texture
         this.gl.bindTexture(this.gl.TEXTURE_2D, texture);
         this.gl.texImage2D(this.gl.TEXTURE_2D, 0, this.gl.RGBA, this.gl.RGBA, this.gl.UNSIGNED_BYTE, image_element);
         this.gl.generateMipmap(this.gl.TEXTURE_2D);
         this.gl.bindTexture(this.gl.TEXTURE_2D, null);
+
+        this.Render();
     }
 
     Render() {
@@ -220,7 +223,7 @@ class GlApp {
     UpdateScene(scene) {
         // update scene
         this.scene = scene;
-        
+
         // update view matrix based on camera properties
         let cam_pos = this.scene.camera.position;
         let cam_target = glMatrix.vec3.create();
@@ -324,7 +327,7 @@ class GlApp {
     CreateShaderProgram(vertex_shader, fragment_shader) {
         // create a GPU program
         let program = this.gl.createProgram();
-        
+
         // attach the vertex and fragment shaders to that program
         this.gl.attachShader(program, vertex_shader);
         this.gl.attachShader(program, fragment_shader);
@@ -342,4 +345,5 @@ class GlApp {
             alert("An error occurred linking the shader program.");
         }
     }
+
 }
