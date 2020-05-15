@@ -19,8 +19,6 @@ void main()
     
     vec3 final_color = final_ambient + final_diffuse + final_specular;
     
-    final_color.x = min(final_color.x, 1.0);
-    final_color.y = min(final_color.y, 1.0);
-    final_color.z = min(final_color.z, 1.0);
-    FragColor = vec4(material_color, 1.0);
+
+    FragColor = vec4(final_color, 1.0);
 }
