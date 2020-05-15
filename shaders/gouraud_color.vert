@@ -34,5 +34,5 @@ void main()
     vec3 reflection_direction = normalize(reflect(-light_direction, vert_normal));
     vec3 view_direction = normalize(camera_position - vert_position);
    
-    specular = light_color[i] * clamp(pow(dot(reflection_direction, view_direction), material_shininess), 0.0, 1.0);
+    specular = light_color * clamp(pow(dot(reflection_direction, view_direction), material_shininess), 0.0, 1.0);
 }
