@@ -30,7 +30,7 @@ void main()
     vec3 light_direction = normalize(light_position - vert_position);
     diffuse = light_color * clamp(dot(vert_normal, light_direction), 0.0, 1.0);
         
-    vec3 reflection_direction = normalize(reflect(normalize(light_direction), normalize(vert_normal)));
-    vec3 view_direction = normalize(vec3(camera_position - vert_position));
+    vec3 reflection_direction = normalize(reflect(normalize(light_direction), normalize(vertex_normal)));
+    vec3 view_direction = normalize(vec3(camera_position - vertex_position));
     specular = light_color * clamp(pow(dot(reflection_direction, view_direction), material_shininess), 0.0, 1.0);
 }
