@@ -25,7 +25,7 @@ void main()
     ambient = light_ambient;
     
     // I think these are correct??
-    vec3 vert_position = vec3(model_matrix * (vec4(vertex_position), 1.0));
+    vec3 vert_position = vec3(model_matrix * (vec4(vertex_position, 1.0));
     vec3 vert_normal = normalize(vec3(inverse(transpose(mat3(model_matrix))) * vertex_normal));
 
     vec3 light_direction = normalize(light_position - vert_position);
