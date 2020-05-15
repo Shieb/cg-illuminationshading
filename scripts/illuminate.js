@@ -106,7 +106,14 @@ class GlApp {
     }
 
     UpdateTexture(texture, image_element) {
-        // TODO: update image for specified texture
+        if(this.algorithm.equals("gouraud_color"))
+        {
+            this.algorithm = "gouraud_texture";   
+        }
+        else if (this.algorith.equals("phong_color"))
+        {
+            this.algorithm = "phong_texture";   
+        }
     }
 
     Render() {
@@ -116,7 +123,8 @@ class GlApp {
         // draw all models
         for (let i = 0; i < this.scene.models.length; i ++) {
             // NOTE: you need to properly select shader here
-            let selected_shader = 'emissive';
+            let selected_shader = this.algorithm + "_" + this.scene.models[i].shader;
+            console.log(selected_shader);
             this.gl.useProgram(this.shader[selected_shader].program);
 
             // transform model to proper position, size, and orientation
