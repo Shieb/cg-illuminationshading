@@ -13,9 +13,9 @@ out vec4 FragColor;
 
 void main() 
 {
-    vec3 final_ambient = material_color * ambient;
-    vec3 final_diffuse = material_color * diffuse;
-    vec3 final_specular = material_specular * specular;
+    vec3 final_ambient = ambient * material_color;
+    vec3 final_diffuse = diffuse * material_color;
+    vec3 final_specular = specular * material_specular;
     
     vec3 final_color = final_ambient + final_diffuse + final_specular;
     
