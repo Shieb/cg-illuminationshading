@@ -29,7 +29,7 @@ void main() {
 
 
 
-      vec3 light_direction = normalize(light_position[i] - vert_pos);
+      vec3 light_direction = normalize(light_position - vert_pos);
       diffuse += (light_color * max(dot(vert_norm, light_direction), 0.0));
 
       vec3 reflection_direction = reflect(-light_direction, vert_norm);
