@@ -30,7 +30,7 @@ void main() {
 
     for(int i = 0; i < num_of_lights; i++) {
       vec3 light_direction = normalize(light_position[i] - vert_pos);
-      diffuse += (light_color[i] * max(dot(v_normal, light_direction), 0.0));
+      diffuse += (light_color[i] * max(dot(vert_norm, light_direction), 0.0));
 
       vec3 reflection_direction = reflect(-light_direction, vert_norm);
       vec3 view_direction = normalize(camera_position - vert_pos);
