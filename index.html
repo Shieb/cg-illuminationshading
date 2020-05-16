@@ -17,16 +17,16 @@
                 el: '#gui',
                 data: {
                     camera: {
-                        position: glMatrix.vec3.fromValues(0.0, 1.8, 0.0),  // x, y, z 1.8
+                        position: glMatrix.vec3.fromValues(0.0, 1.8, 0.0),  // x, y, z
                         direction: glMatrix.vec3.fromValues(0.0, 0.0, -1.0),  // vector pointing in direction camera is looking
                         up: glMatrix.vec3.fromValues(0.0, 1.0, 0.0)  // vector pointing in camera's up direction
                     },
                     models: [
                         {
                             type: 'plane',
-                            shader: 'texture',
+                            shader: 'color',
                             material: {
-                                color: glMatrix.vec3.fromValues(1.0, 1.0, 1.0),  // red, green, blue
+                                color: glMatrix.vec3.fromValues(0.7, 0.1, 0.1),  // red, green, blue
                                 specular: glMatrix.vec3.fromValues(0.0, 0.0, 0.0),  // red, green, blue
                                 shininess: 1
                             },
@@ -34,43 +34,21 @@
                             size: glMatrix.vec3.fromValues(8.0, 1.0, 8.0),  // width, 1.0, depth
                             rotate_x: 0,
                             rotate_y: 0,
-                            rotate_z: 0,
-                            texture: {
-                              url: 'images/Checkered.jpg',
-                              scale: glMatrix.vec2.fromValues(4, 4)
-                            }
+                            rotate_z: 0
                         },
                         {
                             type: 'sphere',
                             shader: 'color',
                             material: {
-                                color: glMatrix.vec3.fromValues(0.0, 0.0, 1.0),  // red, green, blue
+                                color: glMatrix.vec3.fromValues(0.1, 0.4, 0.9),  // red, green, blue
                                 specular: glMatrix.vec3.fromValues(1.0, 1.0, 1.0),  // red, green, blue
                                 shininess: 32
                             },
-                            center: glMatrix.vec3.fromValues(1.0, 1.0, -6.0), // x, y, z
+                            center: glMatrix.vec3.fromValues(0.0, 1.0, -6.0), // x, y, z
                             size: glMatrix.vec3.fromValues(2.0, 2.0, 2.0),  // width, height, depth
                             rotate_x: 0,
                             rotate_y: 0,
                             rotate_z: 0
-                        },
-                        {
-                            type: 'cube',
-                            shader: 'texture',
-                            material: {
-                                color: glMatrix.vec3.fromValues(1.0, 1.0, 1.0),  // red, green, blue
-                                specular: glMatrix.vec3.fromValues(1.0, 1.0, 1.0),  // red, green, blue
-                                shininess: 32
-                            },
-                            center: glMatrix.vec3.fromValues(-1.25, 1.0, -7.0), // x, y, z
-                            size: glMatrix.vec3.fromValues(1.0, 1.0, 1.0),  // width, height, depth
-                            rotate_x: 0,
-                            rotate_y: 0,
-                            rotate_z: 0,
-                            texture: {
-                              url: 'images/Crate.jpg',
-                              scale: glMatrix.vec2.fromValues(1, 1)
-                            }
                         }
                     ],
                     light: {
@@ -78,22 +56,17 @@
                         point_lights: [
                             {
                                 position: glMatrix.vec3.fromValues(1.5, 3.0, -4.5),  // x, y, z
-                                color: glMatrix.vec3.fromValues(1.0, 1.0, 1.0)  // red, green, blue
-                            },
-                            {
-                              position: glMatrix.vec3.fromValues(-1.2, 0.3, -4.5),  // x, y, z
-                              color: glMatrix.vec3.fromValues(1.0, 1.0, 1.0)  // red, green, blue
+                                color: glMatrix.vec3.fromValues(1.0, 1.0, 0.8)  // red, green, blue
                             }
                         ]
                     }
                 }
             });
-
             glapp = new GlApp('view', 800, 600, scene);
             for (let i = 0; i < scene.models.length; i++) {
-              if (scene.models[i].shader === 'texture') {
-                  scene.models[i].texture.id = glapp.InitializeTexture(scene.models[i].texture.url);
-              }
+                if (scene.models[i].shader === 'texture') {
+                    scene.models[i].texture.id = glapp.InitializeTexture(scene.models[i].texture.url);
+                }
             }
 
             // event handler for pressing arrow keys
@@ -106,11 +79,11 @@
             var reader = new FileReader();
             reader.onload = (event) => {
                 let new_scene = JSON.parse(event.target.result);
-                glMatrix.vec3.set(scene.camera.position, new_scene.camera.position[0],
+                glMatrix.vec3.set(scene.camera.position, new_scene.camera.position[0], 
                                   new_scene.camera.position[1], new_scene.camera.position[2]);
-                glMatrix.vec3.set(scene.camera.direction, new_scene.camera.direction[0],
+                glMatrix.vec3.set(scene.camera.direction, new_scene.camera.direction[0], 
                                   new_scene.camera.direction[1], new_scene.camera.direction[2]);
-                glMatrix.vec3.set(scene.camera.up, new_scene.camera.up[0],
+                glMatrix.vec3.set(scene.camera.up, new_scene.camera.up[0], 
                                   new_scene.camera.up[1], new_scene.camera.up[2]);
 
                 scene.models = [];
@@ -119,25 +92,25 @@
                     m.type = new_scene.models[i].type;
                     m.shader = new_scene.models[i].shader;
                     m.material = {};
-                    m.material.color = glMatrix.vec3.fromValues(new_scene.models[i].material.color[0],
+                    m.material.color = glMatrix.vec3.fromValues(new_scene.models[i].material.color[0], 
                                                                 new_scene.models[i].material.color[1],
                                                                 new_scene.models[i].material.color[2]);
-                    m.material.specular = glMatrix.vec3.fromValues(new_scene.models[i].material.specular[0],
+                    m.material.specular = glMatrix.vec3.fromValues(new_scene.models[i].material.specular[0], 
                                                                    new_scene.models[i].material.specular[1],
                                                                    new_scene.models[i].material.specular[2]);
                     m.material.shininess = new_scene.models[i].material.shininess;
-                    m.center = glMatrix.vec3.fromValues(new_scene.models[i].center[0],
+                    m.center = glMatrix.vec3.fromValues(new_scene.models[i].center[0], 
                                                         new_scene.models[i].center[1],
                                                         new_scene.models[i].center[2]);
-                    m.size = glMatrix.vec3.fromValues(new_scene.models[i].size[0],
+                    m.size = glMatrix.vec3.fromValues(new_scene.models[i].size[0], 
                                                       new_scene.models[i].size[1],
                                                       new_scene.models[i].size[2]);
                     m.rotate_x = new_scene.models[i].rotate_x || 0;
-                    m.rotate_x *= Math.PI / 180
+                    m.rotate_x *= Math.PI / 180;
                     m.rotate_y = new_scene.models[i].rotate_y || 0;
-                    m.rotate_y *= Math.PI / 180
+                    m.rotate_y *= Math.PI / 180;
                     m.rotate_z = new_scene.models[i].rotate_z || 0;
-                    m.rotate_z *= Math.PI / 180
+                    m.rotate_z *= Math.PI / 180;
                     if (m.shader === 'texture') {
                         m.texture = {};
                         m.texture.url = new_scene.models[i].texture.url;
@@ -148,7 +121,7 @@
                     scene.models.push(m);
                 }
 
-                glMatrix.vec3.set(scene.light.ambient, new_scene.light.ambient[0],
+                glMatrix.vec3.set(scene.light.ambient, new_scene.light.ambient[0], 
                                   new_scene.light.ambient[1], new_scene.light.ambient[2]);
                 scene.light.point_lights = [];
                 for (let i = 0; i < new_scene.light.point_lights.length; i++) {
@@ -250,7 +223,7 @@
             if (r.length < 2) r = '0' + r;
             if (g.length < 2) g = '0' + g;
             if (b.length < 2) b = '0' + b;
-            return '#' + r + g + b;
+            return '#' + r + g + b; 
         }
     </script>
 </head>
