@@ -23,7 +23,7 @@ void main()
     vec3 light_direction = normalize(light_position - frag_pos);
     vec3 diffuse = light_color * material_color * max(dot(frag_normal, light_direction), 0.0);
     
-    vec3 reflection = normalize(light_direction, frag_normal);
+    vec3 reflection = normalize(reflect(light_direction, frag_normal));
     vec3 view_direction = normalize(camera_position - frag_pos);
     vec3 specular = light_color * material_color * clamp(pow(dot(reflection, view_direction), material_shininess, 0.0, 1.0);
     
