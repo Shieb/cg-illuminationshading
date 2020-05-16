@@ -15,6 +15,17 @@ uniform float material_shininess; // n
 
 out vec4 FragColor;
 
-void main() {
-    FragColor = vec4(material_color, 1.0);
+void main() 
+{
+    vec3 ambient = light_ambient * material_color;
+
+    
+    vec3 light_direction = normalize(light_position - frag_pos);
+    vec3 diffuse = light_color * material_color * max(dot(frag_normal, light_direction), 0.0);
+    
+    vec3 reflection = normalize(light_direction, frag_normal);
+    vec3 view_direction = normalize(camera_position - frag_pos);
+    vec3 specular = light_color * material_color * clamp(pow(dot(reflection, view_direction), material_shininess, 0.0, 1.0);
+    
+    FragColor = vec4(ambient + diffuse + specular, 1.0);
 }
