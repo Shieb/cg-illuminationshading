@@ -29,5 +29,10 @@ void main()
     vec3 view_direction = normalize(camera_position - frag_pos);
     vec3 specular = light_color[i] * material_color * clamp(pow(dot(reflection, view_direction), material_shininess), 0.0, 1.0);
     
-    FragColor = vec4(ambient + diffuse + specular, 1.0);
+    vec3 final_color = ambient + diffuse + specular;
+    final_color.x = min(final_color.x, 1.0);
+    final_color.y = min(final_color.y, 1.0);
+    final_color.z = min(final_color.z, 1.0);
+
+    FragColor = vec4(final_color, 1.0);
 }
