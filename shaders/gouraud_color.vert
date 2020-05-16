@@ -5,7 +5,7 @@ precision highp float;
 in vec3 vertex_position;
 in vec3 vertex_normal;
 
-uniform int num_0f_lights;
+uniform int num_of_lights;
 uniform vec3 light_ambient;
 uniform vec3 light_position[10];
 uniform vec3 light_color[10];
@@ -30,7 +30,7 @@ void main() {
     for(int i = 0; i < num_of_lights; i++)
     {
       vec3 light_direction = normalize(light_position[i] - vert_pos);
-      diffuse += (light_color[i] * max(dot(vert_norm, light_direction), 0.0));
+      diffuse = diffuse + (light_color[i] * max(dot(vert_norm, light_direction), 0.0));
 
       vec3 reflection_direction = reflect(-light_direction, vert_norm);
       vec3 view_direction = normalize(camera_position - vert_pos);
